@@ -5,11 +5,18 @@
             "Myunet\\Utils\\": "src/"
         }
     },
+    "license": [
+        "MIT",
+        "GPL-2.0+"
+    ],
     "authors": [
         {
             "name": "myunet",
-            "email": "9547466+myunet@user.noreply.gitee.com"
+            "email": "myunet@163.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.1.0",
+        "ext-gd": "*"
+    }
 }
