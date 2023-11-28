@@ -1,8 +1,9 @@
 {
     "name": "myunet/utils",
+    "description": "This is a practical tool",
     "autoload": {
         "psr-4": {
-            "Myunet\\Utils\\": "src/"
+            "myunet\\": "src/"
         }
     },
     "license": [
