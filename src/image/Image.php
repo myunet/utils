@@ -116,7 +116,7 @@ class Image
      * @return Image
      * @throws ImageException
      */
-    public function tiletext($text, $font, $size, $color = '#00000000', $angle = 0 ,$cx = 10,$cy=10) {
+    public function tiletext($text, $font, $size, $color = '#00000000', $angle = 20 ,$cx = 100,$cy = 50) {
 
         if (!is_file($font)) {
             throw new ImageException("不存在的字体文件：{$font}");
@@ -135,10 +135,14 @@ class Image
             throw new ImageException('错误的颜色值');
         }
         do {
+            $col = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $color[3]);
             //循环平铺水印 $this->info['width']是被处理图片的宽度
-            for ($x = 0; $x < $this->info['width']; $x) {
-                for ($y = 10; $y < $this->info['height']; $y) {
-                    $col = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $color[3]);
+            for ($x = 0; $x < $this->info['width']; $x++) {
+                for ($y = 10; $y < $this->info['height']; $y++) {
+                    if (($this->info['height'] - $y) < $cy){
+                        imagettftext($this->im, $size, $angle, $x, $y, $col, $font, $text);
+                        $y += $cy;
+                    }
                     imagettftext($this->im, $size, $angle, $x, $y, $col, $font, $text);
                     $y += $cy;
                 }
@@ -528,7 +532,7 @@ class Image
      * @throws ImageException
      */
     public function text($text, $font, $size, $color = '#00000000',
-        $locate = self::WATER_SOUTHEAST, $offset = 0, $angle = 0) {
+                         $locate = self::WATER_SOUTHEAST, $offset = 0, $angle = 0) {
 
         if (!is_file($font)) {
             throw new ImageException("不存在的字体文件：{$font}");
@@ -651,5 +655,4 @@ class Image
     {
         empty($this->im) || imagedestroy($this->im);
     }
-
 }
