@@ -1,0 +1,15 @@
+{
+    "name": "myunet/utils",
+    "autoload": {
+        "psr-4": {
+            "Myunet\\Utils\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "myunet",
+            "email": "9547466+myunet@user.noreply.gitee.com"
+        }
+    ],
+    "require": {}
+}
