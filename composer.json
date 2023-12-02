@@ -1,6 +1,11 @@
 {
     "name": "myunet/utils",
     "description": "This is a practical tool",
+    "keywords": [
+        "utils",
+        "myunet",
+        "php"
+    ],
     "autoload": {
         "psr-4": {
             "myunet\\": "src/"
