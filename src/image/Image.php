@@ -155,13 +155,13 @@ class Image
 
     /**
      * 保存图像
-     * @param string      $pathname  图像保存路径名称
+     * @param string      $pathname  图像保存路径名称 (为空则为base64格式)
      * @param string|null $type      图像类型
      * @param int $quality   图像质量
      * @param bool $interlace 是否对JPEG类型图像设置隔行扫描
      * @return Image|string
      */
-    public function save($pathname, string $type = null, int $quality = 80, bool $interlace = true, $is_base64 = false)
+    public function save($pathname, string $type = null, int $quality = 80, bool $interlace = true)
     {
         //自动获取图像类型
         if (is_null($type)) {
@@ -169,26 +169,38 @@ class Image
         } else {
             $type = strtolower($type);
         }
-        if ($is_base64){
-            ob_start();// 打开输出控制缓冲
-        }
+
+        //名称为空打开缓冲区
+        if (empty($pathname)) ob_start();
+        $output = empty($pathname) ? null : $pathname;
+
         //保存图像
         if ('jpeg' == $type || 'jpg' == $type) {
             //JPEG图像设置隔行扫描
             imageinterlace($this->im, $interlace);
-            imagejpeg($this->im, $pathname, $quality);
+            imagejpeg($this->im, $output, $quality);
         } elseif ('gif' == $type && !empty($this->gif)) {
-            $this->gif->save($pathname);
+            if (empty($output)){
+                imagesavealpha($this->im, true);
+                imagepng($this->im, $output, min((int) ($quality / 10), 9));
+            }else{
+                $this->gif->save($pathname);
+            }
         } elseif ('png' == $type) {
             //设定保存完整的 alpha 通道信息
             imagesavealpha($this->im, true);
             //ImagePNG生成图像的质量范围从0到9的
-            imagepng($this->im, $pathname, min((int) ($quality / 10), 9));
+            imagepng($this->im, $output, min((int) ($quality / 10), 9));
         } else {
-            $fun = 'image' . $type;
-            $fun($this->im, $pathname);
+            if (empty($output)){
+                imagesavealpha($this->im, true);
+                imagepng($this->im, null, min((int) ($quality / 10), 9));
+            }else{
+                $fun = 'image' . $type;
+                $fun($this->im, $pathname);
+            }
         }
-        if ($is_base64){
+        if (empty($pathname)){
             $image_data = ob_get_contents();// 返回输出缓冲区的内容
             ob_end_clean();// 清空（擦除）缓冲区并关闭输出缓冲
             return base64_encode($image_data);
