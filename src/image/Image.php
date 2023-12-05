@@ -156,18 +156,21 @@ class Image
     /**
      * 保存图像
      * @param string      $pathname  图像保存路径名称
-     * @param null|string $type      图像类型
-     * @param int         $quality   图像质量
-     * @param bool        $interlace 是否对JPEG类型图像设置隔行扫描
-     * @return $this
+     * @param string|null $type      图像类型
+     * @param int $quality   图像质量
+     * @param bool $interlace 是否对JPEG类型图像设置隔行扫描
+     * @return Image|string
      */
-    public function save($pathname, $type = null, $quality = 80, $interlace = true)
+    public function save($pathname, string $type = null, int $quality = 80, bool $interlace = true, $is_base64 = false)
     {
         //自动获取图像类型
         if (is_null($type)) {
             $type = $this->info['type'];
         } else {
             $type = strtolower($type);
+        }
+        if ($is_base64){
+            ob_start();// 打开输出控制缓冲
         }
         //保存图像
         if ('jpeg' == $type || 'jpg' == $type) {
@@ -185,7 +188,11 @@ class Image
             $fun = 'image' . $type;
             $fun($this->im, $pathname);
         }
-
+        if ($is_base64){
+            $image_data = ob_get_contents();// 返回输出缓冲区的内容
+            ob_end_clean();// 清空（擦除）缓冲区并关闭输出缓冲
+            return base64_encode($image_data);
+        }
         return $this;
     }
 
